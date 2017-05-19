@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Sunshine Nano</string>
+    <string name="action_settings">Settings</string>
+    <string name="today_default">Today - Sunny - 88/63</string>
+</resources>

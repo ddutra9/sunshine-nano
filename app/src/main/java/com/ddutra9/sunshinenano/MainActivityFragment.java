@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -39,7 +40,12 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView listForeCast = (ListView)view.findViewById(R.id.listview_forecast);
         List<String> weekList = new ArrayList<String>(Arrays.asList(data));
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                R.layout.list_item_forecast, R.id.list_item_forecast_textview, weekList);
+
+        ListView listForeCast = (ListView)view.findViewById(R.id.listview_forecast);
+        listForeCast.setAdapter(adapter);
     }
 }

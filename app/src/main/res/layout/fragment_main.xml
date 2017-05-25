@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.ddutra9.sunshinenano.MainActivityFragment"
+    tools:context="com.ddutra9.sunshinenano.ForecastFragment"
     tools:showIn="@layout/activity_main">
     <ListView
         android:layout_width="match_parent"

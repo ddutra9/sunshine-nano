@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="today_default">Today - Sunny - 88/63</string>
     <string name="refresh">Refresh</string>
-    
+
     <string name="default_zip_code">13206650</string>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>

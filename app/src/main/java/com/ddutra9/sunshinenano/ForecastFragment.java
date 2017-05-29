@@ -1,5 +1,7 @@
 package com.ddutra9.sunshinenano;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,8 +15,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,6 +96,17 @@ public class ForecastFragment extends Fragment {
 
         ListView listForeCast = (ListView)view.findViewById(R.id.listview_forecast);
         listForeCast.setAdapter(adapter);
+
+        listForeCast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+                String msg = adapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, msg);
+                startActivity(intent);
+            }
+        });
     }
 
     private class FetchWeatherTask extends AsyncTask<String, Void, String[]>{

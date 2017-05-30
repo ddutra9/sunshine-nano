@@ -1,10 +1,11 @@
 package com.ddutra9.sunshinenano;
 
 import android.content.Intent;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
@@ -18,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,13 +60,21 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_refresh:{
-                FetchWeatherTask foFetchWeatherTask = new FetchWeatherTask();
-                foFetchWeatherTask.execute(new String[]{getString(R.string.default_zip_code)});
+                updateWeather();
                 return true;
             }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key),
+                getString(R.string.pref_location_default));
+
+        FetchWeatherTask foFetchWeatherTask = new FetchWeatherTask();
+        foFetchWeatherTask.execute(new String[]{location});
     }
 
     @Override
@@ -79,17 +87,7 @@ public class ForecastFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String[] data = {
-                "Mon 6/23 - Sunny - 31/17",
-                "Tue 6/24 - Foggy - 21/8",
-                "Wed 6/25 - Cloudy - 22/17",
-                "Thurs 6/26 - Rainy - 18/11",
-                "Fri 6/27 - Foggy - 21/10",
-                "Sat 6/28 - TRAPPED IN WEATHERSTATION - 23/18",
-                "Sun 6/29 - Sunny - 20/7"
-        };
-
-        List<String> weekList = new ArrayList<String>(Arrays.asList(data));
+        List<String> weekList = new ArrayList<String>();
 
          adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.list_item_forecast, R.id.list_item_forecast_textview, weekList);
@@ -107,6 +105,12 @@ public class ForecastFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     private class FetchWeatherTask extends AsyncTask<String, Void, String[]>{

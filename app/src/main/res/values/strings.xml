@@ -12,4 +12,5 @@
     <string name="pref_location_default">13206650</string>
     <string name="pref_units_label">Temperature units</string>
     <string name="pref_units_key" translatable="false">units</string>
+    <string name="action_map">Map</string>
 </resources>

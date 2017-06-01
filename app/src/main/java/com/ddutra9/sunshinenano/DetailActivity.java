@@ -4,10 +4,14 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +48,14 @@ public class DetailActivity extends AppCompatActivity {
 
     public static class DetailFragment extends Fragment {
 
-        public DetailFragment() {
+        private static final String FORECAST_SHARE_HASHTAG = " #SunshineAppNano";
+        private static final String TAG = DetailFragment.class.getSimpleName();
 
+        private ShareActionProvider mShareActionProvider;
+        private String mForecastStr;
+
+        public DetailFragment() {
+            setHasOptionsMenu(true);
         }
 
         @Override
@@ -61,8 +71,33 @@ public class DetailActivity extends AppCompatActivity {
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
                 TextView textView = (TextView) view.findViewById(R.id.detail_text);
-                textView.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+                mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+                textView.setText(mForecastStr);
             }
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.detail_fragment, menu);
+
+            MenuItem menuItem = menu.findItem(R.id.action_share);
+
+            mShareActionProvider = (ShareActionProvider)
+                    MenuItemCompat.getActionProvider(menuItem);
+
+            if(mForecastStr != null){
+                mShareActionProvider.setShareIntent(createShareForestIntent());
+            } else{
+                Log.d(TAG, "ShareAction provider is null!");
+            }
+        }
+
+        private Intent createShareForestIntent(){
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, mForecastStr + FORECAST_SHARE_HASHTAG);
+            return shareIntent;
         }
     }
 }

@@ -53,8 +53,9 @@ public class WeatherContract {
         public static final String COLUMN_CITY_NAME = "city_name";
         public static final String COLUMN_COORD_LAT = "coord_lat";
         public static final String COLUMN_COORD_LONG = "coord_long";
+
+        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
         public static String CONTENT_TYPE;
-        public static Uri CONTENT_URI;
     }
 
     /* Inner class that defines the table contents of the weather table */
@@ -90,7 +91,8 @@ public class WeatherContract {
         public static final String COLUMN_DEGREES = "degrees";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
-        public static String CONTENT_TYPE;
+        public static final String CONTENT_ITEM_TYPE = "";
+        public static final String CONTENT_TYPE = "";
 
         public static Uri buildWeatherLocation(String location) {
             return CONTENT_URI.buildUpon().appendPath(location).build();
@@ -116,8 +118,8 @@ public class WeatherContract {
             return null;
         }
 
-        public static Uri buildWeatherLocationWithDate(String locationQuery, long testDate) {
-            return null;
+        public static Uri buildWeatherLocationWithDate(String location, long date) {
+            return buildWeatherLocation(location).buildUpon().appendPath(String.valueOf(date)).build();
         }
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.ddutra9.sunshinenano.data;
 
+import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.Time;
@@ -55,7 +56,8 @@ public class WeatherContract {
         public static final String COLUMN_COORD_LONG = "coord_long";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_LOCATION).build();
-        public static String CONTENT_TYPE;
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_LOCATION;
     }
 
     /* Inner class that defines the table contents of the weather table */
@@ -91,8 +93,10 @@ public class WeatherContract {
         public static final String COLUMN_DEGREES = "degrees";
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_WEATHER).build();
-        public static final String CONTENT_ITEM_TYPE = "";
-        public static final String CONTENT_TYPE = "";
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_WEATHER;
 
         public static Uri buildWeatherLocation(String location) {
             return CONTENT_URI.buildUpon().appendPath(location).build();

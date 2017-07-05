@@ -51,6 +51,44 @@ public class WeatherProvider extends ContentProvider {
                         "." + WeatherContract.LocationEntry._ID);
     }
 
+    private static final SQLiteQueryBuilder sWeatherQueryBuilder;
+
+    static{
+        sWeatherQueryBuilder = new SQLiteQueryBuilder();
+        sWeatherQueryBuilder.setTables(WeatherContract.WeatherEntry.TABLE_NAME);
+    }
+
+    private Cursor getWeather(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
+        return sWeatherQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    private static final SQLiteQueryBuilder sLocationQueryBuilder;
+
+    static{
+        sLocationQueryBuilder = new SQLiteQueryBuilder();
+        sLocationQueryBuilder.setTables(WeatherContract.LocationEntry.TABLE_NAME);
+    }
+
+    private Cursor getLocation(String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
+        return sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
     //location.location_setting = ?
     private static final String sLocationSettingSelection =
             WeatherContract.LocationEntry.TABLE_NAME+
@@ -155,8 +193,10 @@ public class WeatherProvider extends ContentProvider {
 
         switch (match) {
             // Student: Uncomment and fill out these two cases
-//            case WEATHER_WITH_LOCATION_AND_DATE:
-//            case WEATHER_WITH_LOCATION:
+            case WEATHER_WITH_LOCATION_AND_DATE:
+                return WeatherContract.WeatherEntry.CONTENT_ITEM_TYPE;
+            case WEATHER_WITH_LOCATION:
+                return WeatherContract.WeatherEntry.CONTENT_TYPE;
             case WEATHER:
                 return WeatherContract.WeatherEntry.CONTENT_TYPE;
             case LOCATION:
@@ -186,15 +226,14 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                retCursor = null;
+                retCursor = getWeather(projection, selection, selectionArgs, sortOrder);
                 break;
             }
             // "location"
             case LOCATION: {
-                retCursor = null;
+                retCursor = getLocation(projection, selection, selectionArgs, sortOrder);
                 break;
             }
-
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

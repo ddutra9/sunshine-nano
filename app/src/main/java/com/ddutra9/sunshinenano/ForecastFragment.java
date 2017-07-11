@@ -1,10 +1,8 @@
 package com.ddutra9.sunshinenano;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -31,12 +29,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private static final int MY_LOADER_ID = 0;
 
     private static final String[] FORECAST_COLUMNS = {
-            // In this case the id needs to be fully qualified with a table name, since
-            // the content provider joins the location & weather tables in the background
-            // (both have an _id column)
-            // On the one hand, that's annoying.  On the other, you can search the weather table
-            // using the location set by the user, which is only in the Location table.
-            // So the convenience is worth it.
             WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
             WeatherContract.WeatherEntry.COLUMN_DATE,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,

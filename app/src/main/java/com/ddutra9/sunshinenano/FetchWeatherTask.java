@@ -19,6 +19,7 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.format.Time;
@@ -39,18 +40,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Vector;
 
-public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
+public class  FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Context mContext;
+    private final String APPID_PARAM = "APPID";
 
     public FetchWeatherTask(Context context) {
-        mContext = context;
+        mContext = context;;
     }
 
     private boolean DEBUG = true;
-
 
     /**
      * Helper method to handle insertion of a new location in the weather database.
@@ -92,7 +93,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
         locationCursor.close();
 
-        return locationId;
+        return  locationId;
     }
 
     /**
@@ -102,7 +103,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private void getWeatherDataFromJson(String forecastJsonStr,
+    private String[] getWeatherDataFromJson(String forecastJsonStr,
                                             String locationSetting)
             throws JSONException {
 
@@ -226,24 +227,46 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             }
 
             // add to database
-            int inserted = 0;
             if ( cVVector.size() > 0 ) {
-                ContentValues[] cvArray = new ContentValues[cVVector.size()];
-                cVVector.toArray(cvArray);
-                inserted = mContext.getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, cvArray);
+                // Student: call bulkInsert to add the weatherEntries to the database here
+                ContentValues[] contentValues = new ContentValues[cVVector.size()];
+                cVVector.toArray(contentValues);
+                mContext.getContentResolver().bulkInsert(WeatherEntry.CONTENT_URI, contentValues);
             }
 
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+            // Sort order:  Ascending, by date.
+            String sortOrder = WeatherEntry.COLUMN_DATE + " ASC";
+            Uri weatherForLocationUri = WeatherEntry.buildWeatherLocationWithStartDate(
+                    locationSetting, System.currentTimeMillis());
+
+            // Students: Uncomment the next lines to display what what you stored in the bulkInsert
+
+            Cursor cur = mContext.getContentResolver().query(weatherForLocationUri,
+                    null, null, null, sortOrder);
+
+            cVVector = new Vector<ContentValues>(cur.getCount());
+            if ( cur.moveToFirst() ) {
+                do {
+                    ContentValues cv = new ContentValues();
+                    DatabaseUtils.cursorRowToContentValues(cur, cv);
+                    cVVector.add(cv);
+                } while (cur.moveToNext());
+            }
+
+            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
+
+            String[] resultStrs = null;
+            return resultStrs;
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
             e.printStackTrace();
         }
-
+        return null;
     }
 
     @Override
-    protected Void doInBackground(String... params) {
+    protected String[] doInBackground(String... params) {
 
         // If there's no zip code, there's nothing to look up.  Verify size of params.
         if (params.length == 0) {
@@ -273,7 +296,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             final String FORMAT_PARAM = "mode";
             final String UNITS_PARAM = "units";
             final String DAYS_PARAM = "cnt";
-            final String APPID_PARAM = "APPID";
 
             Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
                     .appendQueryParameter(QUERY_PARAM, params[0])
@@ -312,12 +334,11 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
                 return null;
             }
             forecastJsonStr = buffer.toString();
-            getWeatherDataFromJson(forecastJsonStr, locationQuery);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error ", e);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
+            // If the code didn't successfully get the weather data, there's no point in attemping
+            // to parse it.
+            return null;
         } finally {
             if (urlConnection != null) {
                 urlConnection.disconnect();
@@ -331,6 +352,22 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
             }
         }
 
+        try {
+            return getWeatherDataFromJson(forecastJsonStr, locationQuery);
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        // This will only happen if there was an error getting or parsing the forecast.
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(String[] result) {
+        if (result != null) {
+            for(String dayForecastStr : result) {
+            }
+            // New data is back from the server.  Hooray!
+        }
     }
 }

@@ -23,11 +23,6 @@ import android.widget.TextView;
 
 import com.ddutra9.sunshinenano.data.WeatherContract;
 
-import static com.ddutra9.sunshinenano.ForecastFragment.COL_WEATHER_DATE;
-import static com.ddutra9.sunshinenano.ForecastFragment.COL_WEATHER_DESC;
-import static com.ddutra9.sunshinenano.ForecastFragment.COL_WEATHER_MAX_TEMP;
-import static com.ddutra9.sunshinenano.ForecastFragment.COL_WEATHER_MIN_TEMP;
-
 public class DetailActivity extends AppCompatActivity {
 
     @Override
@@ -36,21 +31,28 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.detail, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
@@ -59,13 +61,8 @@ public class DetailActivity extends AppCompatActivity {
 
     public static class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        private static final String FORECAST_SHARE_HASHTAG = " #SunshineAppNano";
-        private static final String TAG = DetailFragment.class.getSimpleName();
-        private static final int LOADER_DETAIL = 0;
-
-        private ShareActionProvider mShareActionProvider;
-        private String mForecastStr;
         private TextView detailText;
+        private static final int LOADER_DETAIL = 0;
 
         private static final String[] FORECAST_COLUMNS = {
                 WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -75,32 +72,20 @@ public class DetailActivity extends AppCompatActivity {
                 WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
         };
 
+        static final int COL_WEATHER_ID = 0;
+        static final int COL_WEATHER_DATE = 1;
+        static final int COL_WEATHER_DESC = 2;
+        static final int COL_WEATHER_MAX_TEMP = 3;
+        static final int COL_WEATHER_MIN_TEMP = 4;
+
+        private static final String LOG_TAG = DetailFragment.class.getSimpleName();
+
+        private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+        private String mForecastStr;
+        private ShareActionProvider mShareActionProvider;
+
         public DetailFragment() {
             setHasOptionsMenu(true);
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_detail, container, false);
-        }
-
-        @Override
-        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            getLoaderManager().initLoader(LOADER_DETAIL, null, this);
-        }
-
-        @Override
-        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
-
-            Intent intent = getActivity().getIntent();
-            if (intent != null) {
-                mForecastStr = intent.getDataString();
-            }
-
-            detailText =(TextView) view.findViewById(R.id.detail_text);
         }
 
         @Override
@@ -115,8 +100,33 @@ public class DetailActivity extends AppCompatActivity {
             if(mForecastStr != null){
                 mShareActionProvider.setShareIntent(createShareForestIntent());
             } else{
-                Log.d(TAG, "ShareAction provider is null!");
+                Log.d(LOG_TAG, "ShareAction provider is null!");
             }
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+            Log.v(LOG_TAG, "onCreateView");
+
+//            Intent intent = getActivity().getIntent();
+//            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
+//                mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
+//                mForecastStr = intent.getDataString();
+//                Log.v(LOG_TAG, mForecastStr);
+//                detailText = (TextView) rootView.findViewById(R.id.show_detail_text);
+//            }
+            detailText = (TextView) rootView.findViewById(R.id.detail_text);
+
+            return rootView;
+        }
+
+        @Override
+        public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+            getLoaderManager().initLoader(LOADER_DETAIL, null, this);
+            super.onActivityCreated(savedInstanceState);
         }
 
         private Intent createShareForestIntent(){
@@ -129,7 +139,7 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            Log.v(TAG, "onCreateLoader");
+            Log.v(LOG_TAG, "onCreateLoader");
             Intent intent = getActivity().getIntent();
 
             if(intent == null){
@@ -141,7 +151,7 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-            Log.v(TAG, "onLoadFinished");
+            Log.v(LOG_TAG, "onLoadFinished");
             if(!data.moveToFirst()) {
                 return;
             }

@@ -20,6 +20,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:layout_marginTop="55dp"
+        tools:context=".MainActivity" tools:ignore="MergeRootFrame" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -161,8 +161,8 @@ public class DetailActivity extends AppCompatActivity {
 
             boolean isMetric = Utility.isMetric(getActivity());
 
-            String max = Utility.formatTemperature(data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-            String min = Utility.formatTemperature(data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+            String max = Utility.formatTemperature(getContext(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+            String min = Utility.formatTemperature(getContext(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
 
             mForecastStr = String.format("%s - %s - %s/%s", dateString, weatherDesc, max, min);
             detailText.setText(mForecastStr);

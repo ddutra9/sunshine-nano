@@ -7,7 +7,9 @@ import android.text.format.Time;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by donato on 10/07/17.
@@ -32,14 +34,14 @@ public class Utility {
                 .equals(context.getString(R.string.pref_units_metric));
     }
 
-    static String formatTemperature(double temperature, boolean isMetric) {
+    static String formatTemperature(Context context, double temperature, boolean isMetric) {
         double temp;
         if ( !isMetric ) {
             temp = 9*temperature/5+32;
         } else {
             temp = temperature;
         }
-        return String.format("%.0f", temp);
+        return context.getString(R.string.format_temp, temp);
     }
 
     static String formatDate(long dateInMillis) {
@@ -56,17 +58,12 @@ public class Utility {
      * @return a user-friendly representation of the date.
      */
     public static String getFriendlyDayString(Context context, long dateInMillis) {
-        // The day string for forecast uses the following logic:
-        // For today: "Today, June 8"
-        // For tomorrow:  "Tomorrow"
-        // For the next 5 days: "Wednesday" (just the day name)
-        // For all days after that: "Mon Jun 8"
 
-        Time time = new Time();
-        time.setToNow();
-        long currentTime = System.currentTimeMillis();
-        int julianDay = Time.getJulianDay(dateInMillis, time.gmtoff);
-        int currentJulianDay = Time.getJulianDay(currentTime, time.gmtoff);
+        Calendar cal = GregorianCalendar.getInstance();
+
+        int currentJulianDay = cal.get(Calendar.DAY_OF_MONTH);
+        cal.setTimeInMillis(dateInMillis);
+        int julianDay = cal.get(Calendar.DAY_OF_MONTH);
 
         // If the date we're building the String for is today's date, the format
         // is "Today, June 24"

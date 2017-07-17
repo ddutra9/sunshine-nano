@@ -21,12 +21,14 @@ import android.widget.TextView;
 
 import com.ddutra9.sunshinenano.data.WeatherContract;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by donato on 14/07/17.
  */
 
 public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
-    private TextView detailText;
+    private TextView dayWeekText, dayMonthText, dayMaxTemp, dayMinTemp;
     private static final int LOADER_DETAIL = 0;
 
     private static final String[] FORECAST_COLUMNS = {
@@ -76,14 +78,10 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
         Log.v(LOG_TAG, "onCreateView");
 
-//            Intent intent = getActivity().getIntent();
-//            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-//                mForecastStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-//                mForecastStr = intent.getDataString();
-//                Log.v(LOG_TAG, mForecastStr);
-//                detailText = (TextView) rootView.findViewById(R.id.show_detail_text);
-//            }
-        detailText = (TextView) rootView.findViewById(R.id.day_week_text);
+        dayWeekText = (TextView) rootView.findViewById(R.id.day_week_text);
+        dayMonthText = (TextView) rootView.findViewById(R.id.day_month_text);
+        dayMaxTemp = (TextView) rootView.findViewById(R.id.max_temp_text);
+        dayMinTemp = (TextView) rootView.findViewById(R.id.min_temp_text);
 
         return rootView;
     }
@@ -120,6 +118,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         if(!data.moveToFirst()) {
             return;
         }
+        SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("MMM dd");
 
         String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
         String weatherDesc = data.getString(COL_WEATHER_DESC);
@@ -130,7 +129,12 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         String min = Utility.formatTemperature(getContext(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
 
         mForecastStr = String.format("%s - %s - %s/%s", dateString, weatherDesc, max, min);
-        detailText.setText(mForecastStr);
+        dayWeekText.setText(Utility.getDayName(getContext(), data.getLong(COL_WEATHER_DATE)));
+        dayMonthText.setText(shortenedDateFormat.format(data.getLong(COL_WEATHER_DATE)));
+
+        dayMaxTemp.setText(max);
+        dayMinTemp.setText(min);
+
 
         if(mShareActionProvider != null){
             mShareActionProvider.setShareIntent(createShareForestIntent());

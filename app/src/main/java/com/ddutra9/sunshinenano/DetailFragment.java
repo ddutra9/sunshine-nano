@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 
 public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
     private TextView dayWeekText, dayMonthText, dayMaxTemp, dayMinTemp, humidityText, windSpeedText,
-            pressureText;
+            pressureText, mDescriptionView;
     private static final int LOADER_DETAIL = 0;
 
     private static final String[] FORECAST_COLUMNS = {
@@ -94,6 +94,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         humidityText = (TextView) rootView.findViewById(R.id.humidity_text);
         windSpeedText = (TextView) rootView.findViewById(R.id.wind_text);
         pressureText = (TextView) rootView.findViewById(R.id.pressure_text);
+        mDescriptionView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
 
         return rootView;
     }
@@ -134,6 +135,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
         String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
         String weatherDesc = data.getString(COL_WEATHER_DESC);
+        mDescriptionView.setText(weatherDesc);
 
         boolean isMetric = Utility.isMetric(getActivity());
 

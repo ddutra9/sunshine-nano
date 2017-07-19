@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:name="com.ddutra9.sunshinenano.DetailFragment"
-        tools:showIn="@layout/activity_detail">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header: Day, Date -->
+        <TextView
+            android:id="@+id/day_week_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tomorrow" />
+
+        <TextView
+            android:id="@+id/day_month_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="June 24"/>
+
+        <!-- Main content: high, low, art, weather state -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -19,71 +36,56 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/day_week_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today"/>
-
-                <TextView
-                    android:id="@+id/day_month_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="June 19"/>
-
-                <TextView
                     android:id="@+id/max_temp_text"
-                    android:layout_marginTop="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="20º"/>
+                    android:text="21°"/>
 
                 <TextView
                     android:id="@+id/min_temp_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="13º"
-                    android:layout_marginBottom="16dp"/>
-
-                <TextView
-                    android:id="@+id/humidity_text"
-                    android:layout_marginTop="16dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Humidity 18º"/>
-
-                <TextView
-                    android:id="@+id/wind_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Wind: 2 km/h NW"/>
-
-                <TextView
-                    android:id="@+id/pressure_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pressure: 1017 hPa"/>
-
+                    android:text="11°" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
                 android:orientation="vertical">
 
                 <ImageView
-                    android:layout_marginTop="50dp"
+                    android:id="@+id/detail_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@mipmap/ic_launcher"/>
+                    android:src="@mipmap/ic_launcher" />
 
                 <TextView
-                    android:id="@+id/weather_text"
+                    android:id="@+id/detail_forecast_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Clear"/>
+                    android:text="Clear" />
             </LinearLayout>
+        </LinearLayout>
+
+        <!-- Humidity, wind, pressure -->
+        <TextView
+            android:id="@+id/humidity_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="48%" />
+
+        <TextView
+            android:id="@+id/wind_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="6 km/h NW" />
+
+        <TextView
+            android:id="@+id/pressure_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1014" />
     </LinearLayout>
 </ScrollView>

@@ -17,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ddutra9.sunshinenano.data.WeatherContract;
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat;
 public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
     private TextView dayWeekText, dayMonthText, dayMaxTemp, dayMinTemp, humidityText, windSpeedText,
             pressureText, mDescriptionView;
+    private ImageView detailIcon;
     private static final int LOADER_DETAIL = 0;
 
     private static final String[] FORECAST_COLUMNS = {
@@ -41,7 +44,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
             WeatherContract.WeatherEntry.COLUMN_HUMIDITY,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
             WeatherContract.WeatherEntry.COLUMN_PRESSURE,
-            WeatherContract.WeatherEntry.COLUMN_DEGREES
+            WeatherContract.WeatherEntry.COLUMN_DEGREES,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
 
     static final int COL_WEATHER_ID = 0;
@@ -53,6 +57,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     static final int COL_WIND_SPEED = 6;
     static final int COL_PRESSURE = 7;
     static final int COL_DEGREES = 8;
+    static final int COL_WEATHER_CONDITION_ID = 9;
 
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
@@ -87,6 +92,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
         Log.v(LOG_TAG, "onCreateView");
 
+        detailIcon = (ImageView) rootView.findViewById(R.id.detail_icon);
         dayWeekText = (TextView) rootView.findViewById(R.id.day_week_text);
         dayMonthText = (TextView) rootView.findViewById(R.id.day_month_text);
         dayMaxTemp = (TextView) rootView.findViewById(R.id.max_temp_text);
@@ -148,6 +154,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
         dayMaxTemp.setText(max);
         dayMinTemp.setText(min);
+
+        detailIcon.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID)));
 
         windSpeedText.setText(Utility.getFormattedWind(getContext(), data.getFloat(COL_WIND_SPEED),
                 data.getFloat(COL_DEGREES)));

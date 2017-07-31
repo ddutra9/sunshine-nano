@@ -124,8 +124,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         Log.v(LOG_TAG, "onCreateLoader");
         Intent intent = getActivity().getIntent();
 
-        if(intent == null){
-            return  null;
+        if (intent == null || intent.getData() == null) {
+            return null;
         }
 
         return new CursorLoader(getActivity(), intent.getData(), FORECAST_COLUMNS, null, null, null);

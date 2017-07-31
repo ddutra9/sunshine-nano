@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         mLocation = Utility.getPreferredLocation(this);
         if (findViewById(R.id.weather_detail_container) != null) {
@@ -88,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
         if (location != null && !location.equals(mLocation)) {
             ForecastFragment ff = (ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
             mLocation = location;
+            if (location != null && !location.equals(mLocation)) {
+                ff = (ForecastFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_forecast);
+                if (null != ff) {
+                    ff.onLocationChanged();
+                }
+            }
         }
     }
 

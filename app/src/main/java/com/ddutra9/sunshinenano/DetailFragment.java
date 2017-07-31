@@ -2,6 +2,7 @@ package com.ddutra9.sunshinenano;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -62,8 +63,10 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private static final String LOG_TAG = DetailFragment.class.getSimpleName();
 
     private static final String FORECAST_SHARE_HASHTAG = " #SunshineApp";
+    public static final String DETAIL_URI = "URI";
     private String mForecastStr;
     private ShareActionProvider mShareActionProvider;
+    private Uri mUri;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -91,6 +94,11 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         Log.v(LOG_TAG, "onCreateView");
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
 
         detailIcon = (ImageView) rootView.findViewById(R.id.detail_icon);
         dayWeekText = (TextView) rootView.findViewById(R.id.day_week_text);
@@ -122,13 +130,18 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(LOG_TAG, "onCreateLoader");
-        Intent intent = getActivity().getIntent();
-
-        if (intent == null || intent.getData() == null) {
-            return null;
+        if ( null != mUri ) {
+            return new CursorLoader(
+                    getActivity(),
+                    mUri,
+                    FORECAST_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
         }
 
-        return new CursorLoader(getActivity(), intent.getData(), FORECAST_COLUMNS, null, null, null);
+        return null;
     }
 
     @Override
@@ -172,5 +185,15 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    public void onLocationChanged(String newLocation) {
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            Uri updatedUri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(LOADER_DETAIL, null, this);
+        }
     }
 }

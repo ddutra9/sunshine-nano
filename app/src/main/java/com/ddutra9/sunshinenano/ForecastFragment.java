@@ -67,6 +67,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private ListView listViewForecast;
     private int mPosition = ListView.INVALID_POSITION;
+    private boolean useTodayLayout;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -128,6 +129,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             }
         });
+
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
+            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        }
+
+        mForecastAdapter.setUseTodayLayout(useTodayLayout);
 
         return rootView;
     }
@@ -230,5 +238,12 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mForecastAdapter.swapCursor(null);
+    }
+
+    public void setUseTodayLayout(boolean useTodayLayout) {
+        this.useTodayLayout = useTodayLayout;
+        if(mForecastAdapter != null){
+            mForecastAdapter.setUseTodayLayout(this.useTodayLayout);
+        }
     }
 }

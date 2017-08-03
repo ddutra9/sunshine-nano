@@ -1,7 +1,10 @@
 package com.ddutra9.sunshinenano;
 
+import android.app.VoiceInteractor;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,8 +17,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState == null){
             Bundle arguments = new Bundle();
@@ -49,6 +52,10 @@ public class DetailActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
+        }
+
+        if (id == android.R.id.home) {
+            onBackPressed();
         }
 
         return super.onOptionsItemSelected(item);

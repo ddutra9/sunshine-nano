@@ -6,52 +6,66 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:gravity="center_vertical"
         android:orientation="vertical"
         android:padding="16dp">
 
         <!-- Header: Day, Date -->
         <TextView
+            android:fontFamily="sans-serif-condensed"
             android:id="@+id/day_week_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tomorrow" />
+            android:text="Tomorrow"
+            android:textColor="@color/black"
+            android:textSize="24sp"/>
 
         <TextView
+            android:fontFamily="sans-serif-condensed"
             android:id="@+id/day_month_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="June 24"/>
+            android:text="June 24"
+            android:textColor="@color/grey_700"
+            android:textSize="16sp"/>
 
         <!-- Main content: high, low, art, weather state -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="left"
                 android:orientation="vertical">
 
                 <TextView
+                    android:fontFamily="sans-serif-light"
                     android:id="@+id/max_temp_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="21°"/>
+                    android:text="21°"
+                    android:textSize="96sp"/>
 
                 <TextView
                     android:id="@+id/min_temp_text"
+                    android:layout_gravity="center_horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="11°" />
+                    android:text="11°"
+                    android:textColor="@color/grey_700"
+                    android:textSize="48sp"/>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -64,27 +78,41 @@
                     android:id="@+id/detail_forecast_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Clear" />
+                    android:text="Clear"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/grey_700"/>
             </LinearLayout>
         </LinearLayout>
 
         <!-- Humidity, wind, pressure -->
-        <TextView
-            android:id="@+id/humidity_text"
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="16dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="48%" />
+            android:orientation="vertical">
+                <TextView
+                    android:id="@+id/humidity_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="48%"
+                    android:textAppearance="?android:textAppearanceLarge"/>
 
-        <TextView
-            android:id="@+id/wind_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="6 km/h NW" />
+                <TextView
+                    android:id="@+id/wind_text"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="6 km/h NW"
+                    android:textAppearance="?android:textAppearanceLarge"/>
 
-        <TextView
-            android:id="@+id/pressure_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="1014" />
+                <TextView
+                    android:id="@+id/pressure_text"
+                    android:layout_marginTop="4dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1014"
+                    android:textAppearance="?android:textAppearanceLarge"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

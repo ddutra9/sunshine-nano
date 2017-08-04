@@ -13,7 +13,8 @@
          <ImageView
              android:id="@+id/list_item_icon"
              android:layout_width="wrap_content"
-             android:layout_height="wrap_content"/>
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"/>
  </FrameLayout>
 
  <LinearLayout
@@ -26,7 +27,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:fontFamily="sans-serif-condensed"
-      android:textAppearance="?android:textAppearanceLarge"
+      android:textSize="20sp"
       android:id="@+id/list_item_date_textview"/>
 
   <TextView
@@ -48,6 +49,7 @@
   <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_gravity="center"
       android:fontFamily="sans-serif-condensed"
       android:textAppearance="?android:textAppearanceLarge"
       android:id="@+id/list_item_high_textview"/>
@@ -55,6 +57,7 @@
   <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:layout_gravity="center"
       android:fontFamily="sans-serif-condensed"
       android:textAppearance="?android:textAppearanceSmall"
       android:id="@+id/list_item_low_textview"/>

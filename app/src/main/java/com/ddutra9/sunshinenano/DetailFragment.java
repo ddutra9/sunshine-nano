@@ -169,6 +169,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         dayMinTemp.setText(min);
 
         detailIcon.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID)));
+        detailIcon.setContentDescription(weatherDesc);
 
         windSpeedText.setText(Utility.getFormattedWind(getContext(), data.getFloat(COL_WIND_SPEED),
                 data.getFloat(COL_DEGREES)));

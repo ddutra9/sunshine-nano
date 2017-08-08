@@ -38,6 +38,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ddutra9.sunshinenano.MainActivity" />
         </activity>
-    </application>
 
+        <service android:name=".service.SunshineService"/>
+    </application>
 </manifest>

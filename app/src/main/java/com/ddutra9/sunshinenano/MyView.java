@@ -8,6 +8,8 @@ import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
+import android.view.accessibility.AccessibilityManager;
 
 /**
  * Created by donato on 07/08/17.
@@ -33,6 +35,13 @@ public class MyView extends View {
     public MyView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initPaints();
+
+        AccessibilityManager accessibilityManager = (AccessibilityManager)
+            context.getSystemService(Context.ACCESSIBILITY_SERVICE);
+
+        if (accessibilityManager.isEnabled()) {
+            sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED);
+        }
     }
 
     private void initPaints() {
@@ -73,5 +82,12 @@ public class MyView extends View {
 
         float mouthInset = mRadius /3f;
         mArcBounds.set(mouthInset, mouthInset, mRadius * 2 - mouthInset, mRadius * 2 - mouthInset);
-        canvas.drawArc(mArcBounds, 45f, 90f, false, mEyeAndMouthPaint);}
+        canvas.drawArc(mArcBounds, 45f, 90f, false, mEyeAndMouthPaint);
+    }
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        event.getText().add("");
+        return true;
+    }
 }

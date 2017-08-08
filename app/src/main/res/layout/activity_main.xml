@@ -16,4 +16,10 @@
         tools:context="com.ddutra9.sunshinenano.ForecastFragment"
         tools:layout="@android:layout/list_content" />
 
+    <com.ddutra9.sunshinenano.MyView
+        android:id="@+id/custom_view"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>

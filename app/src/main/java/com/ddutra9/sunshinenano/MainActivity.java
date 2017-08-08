@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
@@ -60,8 +61,9 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             return true;
         }
 
-        if (id == R.id.action_smile) {
-
+        if (id == R.id.action_smile && !mTwoPane) {
+            MyView myView = (MyView) findViewById(R.id.custom_view);
+            myView.setVisibility(View.VISIBLE);
             return true;
         }
 

@@ -1,11 +1,15 @@
 package com.ddutra9.sunshinenano;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -33,6 +37,7 @@ import com.ddutra9.sunshinenano.service.SunshineService;
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     //    private ArrayAdapter<String> mForecastAdapter;
+    private static final String TAG = ForecastFragment.class.getSimpleName();
     private ForecastAdapter mForecastAdapter;
     private static final int MY_LOADER_ID = 0;
     private static final int REQUEST_PERMISSION_INTERNT = 1;
@@ -206,10 +211,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
 //        String location = Utility.getPreferredLocation(getActivity());
 //        weatherTask.execute(location);
+        Log.d(TAG, "updateWeather");
+        Intent alarmIntent = new Intent(getContext(), SunshineService.AlarmReceiver.class);
+        alarmIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
 
-        Intent intent = new Intent(getActivity(), SunshineService.class);
-        intent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
-        getActivity().startService(intent);
+        PendingIntent pi = PendingIntent.getBroadcast(getContext(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+
+        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, pi);
     }
 
     @Override

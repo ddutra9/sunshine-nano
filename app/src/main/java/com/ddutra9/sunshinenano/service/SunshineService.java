@@ -1,6 +1,7 @@
 package com.ddutra9.sunshinenano.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,8 +13,8 @@ import android.support.annotation.Nullable;
 import android.text.format.Time;
 import android.util.Log;
 
-import com.ddutra9.sunshinenano.FetchWeatherTask;
 import com.ddutra9.sunshinenano.R;
+import com.ddutra9.sunshinenano.Utility;
 import com.ddutra9.sunshinenano.data.WeatherContract;
 
 import org.json.JSONArray;
@@ -34,7 +35,7 @@ import java.util.Vector;
 
 public class SunshineService extends IntentService {
 
-    private static final String LOG_TAG = SunshineService.class.getSimpleName();
+    private static final String TAG = SunshineService.class.getSimpleName();
     private static final String APPID_PARAM = "APPID";
     public static final String LOCATION_QUERY_EXTRA = "lqe";
 
@@ -242,13 +243,13 @@ public class SunshineService extends IntentService {
                 } while (cur.moveToNext());
             }
 
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
+            Log.d(TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
 
             String[] resultStrs = null;
             return resultStrs;
 
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
         }
         return null;
@@ -319,7 +320,7 @@ public class SunshineService extends IntentService {
             }
             forecastJsonStr = buffer.toString();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error ", e);
+            Log.e(TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
             return;
@@ -331,7 +332,7 @@ public class SunshineService extends IntentService {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(LOG_TAG, "Error closing stream", e);
+                    Log.e(TAG, "Error closing stream", e);
                 }
             }
         }
@@ -339,8 +340,19 @@ public class SunshineService extends IntentService {
         try {
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
         } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
+            Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
+        }
+    }
+
+    public static class AlarmReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive");
+            Intent sendIntent = new Intent(context, SunshineService.class);
+            sendIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, intent.getStringExtra(LOCATION_QUERY_EXTRA));
+            context.startService(sendIntent);
         }
     }
 }

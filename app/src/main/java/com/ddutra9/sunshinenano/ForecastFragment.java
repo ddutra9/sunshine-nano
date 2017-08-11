@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ import android.widget.ListView;
 
 import com.ddutra9.sunshinenano.data.WeatherContract;
 import com.ddutra9.sunshinenano.service.SunshineService;
+import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -212,13 +214,15 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //        String location = Utility.getPreferredLocation(getActivity());
 //        weatherTask.execute(location);
         Log.d(TAG, "updateWeather");
-        Intent alarmIntent = new Intent(getContext(), SunshineService.AlarmReceiver.class);
-        alarmIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
+//        Intent alarmIntent = new Intent(getContext(), SunshineService.AlarmReceiver.class);
+//        alarmIntent.putExtra(SunshineService.LOCATION_QUERY_EXTRA, Utility.getPreferredLocation(getActivity()));
+//
+//        PendingIntent pi = PendingIntent.getBroadcast(getContext(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
+//
+//        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+//        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, pi);
 
-        PendingIntent pi = PendingIntent.getBroadcast(getContext(), 0, alarmIntent, PendingIntent.FLAG_ONE_SHOT);
-
-        AlarmManager alarmMgr = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
-        alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 5000, pi);
+        SunshineSyncAdapter.syncImmediately(getContext());
     }
 
     @Override

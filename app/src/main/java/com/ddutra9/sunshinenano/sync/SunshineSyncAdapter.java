@@ -40,6 +40,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Vector;
 
 public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
@@ -331,6 +332,8 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 ContentValues[] contentValues = new ContentValues[cVVector.size()];
                 cVVector.toArray(contentValues);
                 getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, contentValues);
+
+                deleteYesterday();
                 notifyWeather();
             }
 
@@ -355,14 +358,23 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             Log.d(TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
 
-            String[] resultStrs = null;
-            return resultStrs;
+            return null;
 
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void deleteYesterday(){
+        Log.d(TAG, "deleteYesterday:");
+        Calendar cal = Calendar.getInstance(); //Get's a calendar object with the current time.
+        cal.add(Calendar.DATE, -1); //Signifies yesterday's date
+        long yesterdayDate = WeatherContract.normalizeDate(cal.getTime().getTime());
+        getContext().getContentResolver().delete(WeatherContract.WeatherEntry.CONTENT_URI,
+                WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+                new String[] {String.valueOf(yesterdayDate)});
     }
 
     @Override

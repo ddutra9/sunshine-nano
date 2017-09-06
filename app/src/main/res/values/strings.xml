@@ -59,4 +59,6 @@
     <string name="pref_enable_notifications_true">Ativado</string>
     <string name="pref_enable_notifications_false">Não ativado</string>
     <string name="pref_enable_notifications_default" translatable="false">verdadeiro</string>
+    <string name="empty_forecast_list">No weather information avaliable</string>
+    <string name="no_network_avaliable">No network avaliable</string>
 </resources>

@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.ddutra9.sunshinenano.data.WeatherContract;
 import com.ddutra9.sunshinenano.service.SunshineService;
@@ -74,6 +75,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_COORD_LONG = 8;
 
     private ListView listViewForecast;
+    private View emptyView;
     private int mPosition = ListView.INVALID_POSITION;
     private boolean useTodayLayout;
 
@@ -107,7 +109,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         listViewForecast = (ListView) rootView.findViewById(R.id.listview_forecast);
+        emptyView = rootView.findViewById(R.id.listview_forecast_empty);
+
         listViewForecast.setAdapter(mForecastAdapter);
+        listViewForecast.setEmptyView(emptyView);
 
 //        listViewForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -245,6 +250,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         if (mPosition != ListView.INVALID_POSITION) {
             listViewForecast.smoothScrollToPosition(mPosition);
+        }
+
+        if((data == null || data.getCount() == 0) && !Utility.isNetworkAvaliable(getActivity())){
+            ((TextView)emptyView).setText(getString(R.string.no_network_avaliable));
         }
     }
 

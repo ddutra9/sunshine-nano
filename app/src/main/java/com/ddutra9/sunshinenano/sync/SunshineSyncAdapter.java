@@ -361,12 +361,13 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             }
 
             Log.d(TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
-
+            setNavegationMode(getContext(), LOCATION_STATUS_OK);
             return null;
 
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
+            setNavegationMode(getContext(), LOCATION_STATUS_SERVER_INVALID);
         }
         return null;
     }
@@ -444,6 +445,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             if (buffer.length() == 0) {
                 // Stream was empty.  No point in parsing.
+                setNavegationMode(getContext(), LOCATION_STATUS_SERVER_DOWN);
                 return;
             }
             forecastJsonStr = buffer.toString();
@@ -451,6 +453,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.e(TAG, "Error ", e);
             // If the code didn't successfully get the weather data, there's no point in attemping
             // to parse it.
+            setNavegationMode(getContext(), LOCATION_STATUS_SERVER_DOWN);
             return;
         } finally {
             if (urlConnection != null) {
@@ -470,6 +473,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
+            setNavegationMode(getContext(), LOCATION_STATUS_SERVER_INVALID);
         }
     }
 
@@ -572,4 +576,11 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
     public static final int LOCATION_STATUS_SERVER_INVALID = 2;
     public static final int LOCATION_STATUS_UNKNOWN = 3;
+
+    private static void setNavegationMode(Context c, @NavigationMode int navigationMode){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_navegation_mode_key), navigationMode);
+        spe.commit();
+    }
 }

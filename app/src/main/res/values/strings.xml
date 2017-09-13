@@ -62,4 +62,7 @@
     <string name="pref_navegation_mode_key" translatable="false">navegation_mode</string>
     <string name="empty_forecast_list">No weather information avaliable</string>
     <string name="no_network_avaliable">No network avaliable</string>
+
+    <string name="empty_forecast_list_server_down">Sem informações de previsão do tempo. O servidor não está retornando dados.</string>
+    <string name="empty_forecast_list_server_error">Sem informações de previsão do tempo. O servidor não está retornando dados válidos.</string>
 </resources>

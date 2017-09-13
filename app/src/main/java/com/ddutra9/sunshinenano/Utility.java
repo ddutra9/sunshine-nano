@@ -7,11 +7,15 @@ import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
+import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import static com.ddutra9.sunshinenano.sync.SunshineSyncAdapter.*;
 
 /**
  * Created by donato on 10/07/17.
@@ -252,5 +256,12 @@ public class Utility {
             direction = "NW";
         }
         return String.format(context.getString(windFormat), windSpeed, direction);
+    }
+
+    @SuppressWarnings("ResourceType")
+    public static @NavigationMode int getNavegationMode(Context c) {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        return sp.getInt(c.getString(R.string.pref_navegation_mode_key),
+                LOCATION_STATUS_UNKNOWN);
     }
 }

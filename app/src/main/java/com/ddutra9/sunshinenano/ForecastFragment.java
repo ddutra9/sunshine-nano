@@ -6,11 +6,13 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -37,7 +39,7 @@ import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     //    private ArrayAdapter<String> mForecastAdapter;
     private static final String TAG = ForecastFragment.class.getSimpleName();
@@ -252,9 +254,35 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             listViewForecast.smoothScrollToPosition(mPosition);
         }
 
-        if((data == null || data.getCount() == 0) && !Utility.isNetworkAvaliable(getActivity())){
-            ((TextView)emptyView).setText(getString(R.string.no_network_avaliable));
+        if((data == null || data.getCount() == 0)){
+            updateEmpityView();
         }
+    }
+
+    public void updateEmpityView(){
+        int message = R.string.empty_forecast_list;
+        @SunshineSyncAdapter.NavigationMode int navegationMode = Utility.getNavegationMode(getActivity());
+        switch (navegationMode){
+            case SunshineSyncAdapter.LOCATION_STATUS_SERVER_DOWN:{
+                message = R.string.empty_forecast_list_server_down;
+                break;
+            }
+            case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:{
+                message = R.string.empty_forecast_list_server_error;
+                break;
+            }
+        }
+
+        if(!Utility.isNetworkAvaliable(getActivity())){
+            message = R.string.no_network_avaliable;
+        }
+
+        ((TextView)emptyView).setText(getString(message));
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        updateEmpityView();
     }
 
     @Override
@@ -301,5 +329,19 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             }
 
         }
+    }
+
+    @Override
+    public void onResume() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.registerOnSharedPreferenceChangeListener(this);
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sp.unregisterOnSharedPreferenceChangeListener(this);
+        super.onPause();
     }
 }

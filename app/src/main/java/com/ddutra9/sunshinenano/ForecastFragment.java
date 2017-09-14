@@ -267,6 +267,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 message = R.string.empty_forecast_list_server_down;
                 break;
             }
+            case SunshineSyncAdapter.LOCATION_STATUS_INVALID:{
+                message = R.string.empty_forecast_list_invalid_location;
+                break;
+            }
             case SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID:{
                 message = R.string.empty_forecast_list_server_error;
                 break;
@@ -282,7 +286,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        updateEmpityView();
+        if(key.equals("units")){
+            updateEmpityView();
+        } else if(key.equals("location")){
+            Utility.resetNavegationMode(getActivity());
+        }
     }
 
     @Override

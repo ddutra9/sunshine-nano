@@ -264,4 +264,11 @@ public class Utility {
         return sp.getInt(c.getString(R.string.pref_navegation_mode_key),
                 LOCATION_STATUS_UNKNOWN);
     }
+
+    public static void resetNavegationMode(Context c){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_navegation_mode_key), LOCATION_STATUS_UNKNOWN);
+        spe.apply();
+    }
 }

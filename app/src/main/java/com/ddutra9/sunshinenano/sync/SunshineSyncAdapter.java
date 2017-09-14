@@ -207,7 +207,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
-    private String[] getWeatherDataFromJson(String forecastJsonStr,
+    private void getWeatherDataFromJson(String forecastJsonStr,
                                             String locationSetting)
             throws JSONException {
 
@@ -218,6 +218,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         // These are the names of the JSON objects that need to be extracted.
 
         // Location information
+        final String OWM_MESSAGE_CODE = "cod";
         final String OWM_CITY = "city";
         final String OWM_CITY_NAME = "name";
         final String OWM_COORD = "coord";
@@ -245,6 +246,23 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
             JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+            if(forecastJson.has(OWM_MESSAGE_CODE)){
+                int errorCode = forecastJson.getInt(OWM_MESSAGE_CODE);
+
+                switch (errorCode){
+                    case HttpURLConnection.HTTP_OK:{
+                        break;
+                    }case HttpURLConnection.HTTP_NOT_FOUND:{
+                        setNavegationMode(getContext(), LOCATION_STATUS_INVALID);
+                        return;
+                    } default:{
+                        setNavegationMode(getContext(), LOCATION_STATUS_SERVER_DOWN);
+                        return;
+                    }
+                }
+            }
+
             JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
             JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
@@ -362,14 +380,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
             Log.d(TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
             setNavegationMode(getContext(), LOCATION_STATUS_OK);
-            return null;
+            return;
 
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
             setNavegationMode(getContext(), LOCATION_STATUS_SERVER_INVALID);
         }
-        return null;
+        return;
     }
 
     public void deleteYesterday(){
@@ -569,13 +587,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     @Retention(SOURCE)
-    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN})
+    @IntDef({LOCATION_STATUS_OK, LOCATION_STATUS_SERVER_DOWN, LOCATION_STATUS_SERVER_INVALID, LOCATION_STATUS_UNKNOWN, LOCATION_STATUS_INVALID})
     public @interface NavigationMode {}
 
     public static final int LOCATION_STATUS_OK = 0;
     public static final int LOCATION_STATUS_SERVER_DOWN = 1;
     public static final int LOCATION_STATUS_SERVER_INVALID = 2;
     public static final int LOCATION_STATUS_UNKNOWN = 3;
+    public static final int LOCATION_STATUS_INVALID = 4;
 
     private static void setNavegationMode(Context c, @NavigationMode int navigationMode){
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);

@@ -306,7 +306,7 @@ public class WeatherProvider extends ContentProvider {
         if(rowsDeleted != 0 || selection == null){
             getContext().getContentResolver().notifyChange(uri, null);
         }
-        db.close();
+//        db.close();
 
         // Student: return the actual rows deleted
         return rowsDeleted;

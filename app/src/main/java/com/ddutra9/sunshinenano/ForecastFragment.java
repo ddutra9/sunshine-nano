@@ -286,11 +286,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals("units")){
-            updateEmpityView();
-        } else if(key.equals("location")){
-            Utility.resetNavegationMode(getActivity());
-        }
+        updateEmpityView();
     }
 
     @Override

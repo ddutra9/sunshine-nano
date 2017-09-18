@@ -66,4 +66,8 @@
     <string name="empty_forecast_list_server_down">Sem informações de previsão do tempo. O servidor não está retornando dados.</string>
     <string name="empty_forecast_list_server_error">Sem informações de previsão do tempo. O servidor não está retornando dados válidos.</string>
     <string name="empty_forecast_list_invalid_location">Sem informações de previsão do tempo. A localização nas configurações não é reconhecida pelo servidor de previsão do tempo.</string>
+
+    <!-- Strings used when displaying the state of the Location in settings -->
+    <string name="pref_location_error_description">Invalid Location (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
+    <string name="pref_location_unknown_description">Validating Location... (<xliff:g id="location_setting">%1$s</xliff:g>)"</string>
 </resources>

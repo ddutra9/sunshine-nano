@@ -155,6 +155,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
         String weatherDesc = data.getString(COL_WEATHER_DESC);
         mDescriptionView.setText(weatherDesc);
+        mDescriptionView.setContentDescription(getString(R.string.a11y_forecast, weatherDesc));
 
         boolean isMetric = Utility.isMetric(getActivity());
 
@@ -166,15 +167,19 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         dayMonthText.setText(shortenedDateFormat.format(data.getLong(COL_WEATHER_DATE)));
 
         dayMaxTemp.setText(max);
+        dayMaxTemp.setContentDescription(getString(R.string.a11y_high_temp, max));
         dayMinTemp.setText(min);
+        dayMinTemp.setContentDescription(getString(R.string.a11y_low_temp, min));
 
         detailIcon.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID)));
-        detailIcon.setContentDescription(weatherDesc);
+        detailIcon.setContentDescription(getString(R.string.a11y_forecast_icon, weatherDesc));
 
         windSpeedText.setText(Utility.getFormattedWind(getContext(), data.getFloat(COL_WIND_SPEED),
                 data.getFloat(COL_DEGREES)));
+        windSpeedText.setContentDescription(windSpeedText.getText());
 
         humidityText.setText(Utility.getFormattedHumidity(getContext(), data.getFloat(COL_HUMIDITY)));
+        humidityText.setContentDescription(humidityText.getText());
 
         pressureText.setText(Utility.getFormattedPressure(getContext(), data.getFloat(COL_PRESSURE)));
 

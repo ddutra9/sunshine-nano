@@ -59,10 +59,10 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:id="@+id/list_item_icon"/>
+            android:id="@+id/list_item_icon"
+            android:adjustViewBounds="true" />
 
         <TextView
             android:layout_width="wrap_content"

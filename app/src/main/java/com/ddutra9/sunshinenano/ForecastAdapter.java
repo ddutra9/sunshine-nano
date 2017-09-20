@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import static com.ddutra9.sunshinenano.Utility.formatDate;
 
 /**
@@ -97,16 +99,23 @@ public class ForecastAdapter extends CursorAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         int weatherId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        int fallbackIconId;
         // Use placeholder image for now
         int viewType = getItemViewType(cursor.getPosition());
         switch (viewType){
             case VIEW_TYPE_TODAY:
-                viewHolder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
+                fallbackIconId = Utility.getArtResourceForWeatherCondition(weatherId);
                 break;
-            case VIEW_TYPE_FUTURE_DAY:
-                viewHolder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(weatherId));
+            default:
+                fallbackIconId = Utility.getIconResourceForWeatherCondition(weatherId);
                 break;
         }
+
+        Glide.with(mContext)
+            .load(Utility.getArtUrlForWeatherCondition(mContext, weatherId))
+            .error(fallbackIconId)
+            .crossFade()
+            .into(viewHolder.iconView);
 
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
 

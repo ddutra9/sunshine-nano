@@ -2,6 +2,7 @@ package com.ddutra9.sunshinenano;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.ddutra9.sunshinenano.data.WeatherContract;
 
 import java.text.SimpleDateFormat;
@@ -171,7 +173,12 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         dayMinTemp.setText(min);
         dayMinTemp.setContentDescription(getString(R.string.a11y_low_temp, min));
 
-        detailIcon.setImageResource(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID)));
+        Glide.with(this)
+                .load(Utility.getArtUrlForWeatherCondition(getActivity(), data.getInt(COL_WEATHER_CONDITION_ID)))
+                .error(Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID)))
+                .crossFade()
+                .into(detailIcon);
+
         detailIcon.setContentDescription(getString(R.string.a11y_forecast_icon, weatherDesc));
 
         windSpeedText.setText(Utility.getFormattedWind(getContext(), data.getFloat(COL_WIND_SPEED),

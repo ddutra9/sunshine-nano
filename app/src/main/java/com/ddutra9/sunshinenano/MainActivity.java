@@ -11,11 +11,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiActivity;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
     private String mLocation;
     private boolean mTwoPane;
@@ -43,6 +47,22 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         forecastFragment.setUseTodayLayout(!mTwoPane);
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
+        checkPlayServices();
+    }
+
+    private boolean checkPlayServices(){
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if(resultCode != ConnectionResult.SUCCESS){
+            if(apiAvailability.isUserResolvableError(resultCode)){
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_TAG, "This device is not supported!");
+                finish();
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override

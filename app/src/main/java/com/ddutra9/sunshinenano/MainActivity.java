@@ -1,8 +1,10 @@
 package com.ddutra9.sunshinenano;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -10,13 +12,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ddutra9.sunshinenano.service.RegistrationIntentService;
 import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiActivity;
+import com.google.android.gms.iid.InstanceID;
 
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
+    public static final String SEND_TOKEN_TO_SERVER = "sentTokenToServer";
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -47,7 +52,15 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
         forecastFragment.setUseTodayLayout(!mTwoPane);
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
-        checkPlayServices();
+        if(checkPlayServices()){
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+            boolean sendToken = sharedPreferences.getBoolean(SEND_TOKEN_TO_SERVER, false);
+            if(!sendToken){
+                Intent i = new Intent(this, RegistrationIntentService.class);
+                startService(i);
+            }
+        }
     }
 
     private boolean checkPlayServices(){

@@ -152,6 +152,15 @@ public class Utility {
         }
     }
 
+    public static String getFullFriendlyDayString(Context context, long dateInMillis) {
+        String day = getDayName(context, dateInMillis);
+        int formatId = R.string.format_full_friendly_date;
+        return String.format(context.getString(
+                formatId),
+                day,
+                getFormattedMonthDay(context, dateInMillis));
+    }
+
     public static String getFormattedPressure(Context context, float pressure){
         return String.format(context.getString(R.string.format_pressure), pressure);
     }

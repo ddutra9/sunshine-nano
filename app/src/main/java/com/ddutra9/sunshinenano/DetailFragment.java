@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat;
  */
 
 public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
-    private TextView dayWeekText, dayMonthText, dayMaxTemp, dayMinTemp, humidityText, windSpeedText,
+    private TextView detailDateTextview, dayMaxTemp, dayMinTemp, humidityText, windSpeedText,
             pressureText, mDescriptionView;
     private ImageView detailIcon;
     private static final int LOADER_DETAIL = 0;
@@ -103,13 +103,12 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         }
 
         detailIcon = (ImageView) rootView.findViewById(R.id.detail_icon);
-        dayWeekText = (TextView) rootView.findViewById(R.id.day_week_text);
-        dayMonthText = (TextView) rootView.findViewById(R.id.day_month_text);
-        dayMaxTemp = (TextView) rootView.findViewById(R.id.max_temp_text);
-        dayMinTemp = (TextView) rootView.findViewById(R.id.min_temp_text);
-        humidityText = (TextView) rootView.findViewById(R.id.humidity_text);
-        windSpeedText = (TextView) rootView.findViewById(R.id.wind_text);
-        pressureText = (TextView) rootView.findViewById(R.id.pressure_text);
+        detailDateTextview = (TextView) rootView.findViewById(R.id.detail_date_textview);
+        dayMaxTemp = (TextView) rootView.findViewById(R.id.detail_high_textview);
+        dayMinTemp = (TextView) rootView.findViewById(R.id.detail_low_textview);
+        humidityText = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
+        windSpeedText = (TextView) rootView.findViewById(R.id.detail_wind_textview);
+        pressureText = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
         mDescriptionView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
 
         return rootView;
@@ -165,8 +164,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         String min = Utility.formatTemperature(getContext(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
 
         mForecastStr = String.format("%s - %s - %s/%s", dateString, weatherDesc, max, min);
-        dayWeekText.setText(Utility.getDayName(getContext(), data.getLong(COL_WEATHER_DATE)));
-        dayMonthText.setText(shortenedDateFormat.format(data.getLong(COL_WEATHER_DATE)));
+        detailDateTextview.setText(Utility.getFullFriendlyDayString(getContext(), data.getLong(COL_WEATHER_DATE)));
 
         dayMaxTemp.setText(max);
         dayMaxTemp.setContentDescription(getString(R.string.a11y_high_temp, max));

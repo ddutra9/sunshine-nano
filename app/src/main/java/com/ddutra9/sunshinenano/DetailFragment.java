@@ -93,7 +93,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.main, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_detail_start, container, false);
 
         Log.v(LOG_TAG, "onCreateView");
 

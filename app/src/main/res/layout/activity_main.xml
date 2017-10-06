@@ -1,8 +1,7 @@
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -25,7 +24,6 @@
         android:name="com.ddutra9.sunshinenano.ForecastFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.android.sunshine.app.ForecastFragment"
         tools:layout="@android:layout/list_content" />
 
     <com.ddutra9.sunshinenano.MyView
@@ -34,4 +32,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</LinearLayout>
+</FrameLayout>

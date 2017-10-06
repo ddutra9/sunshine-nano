@@ -1,27 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="?attr/listPreferredItemHeight"
             android:layout_marginTop="?attr/actionBarSize"
-            android:src="@drawable/ic_logo"
             android:layout_gravity="center_horizontal"
+            android:src="@drawable/ic_logo"
             android:scaleType="center"
             android:background="@color/primary"/>
-
     </android.support.v7.widget.Toolbar>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
@@ -30,7 +25,7 @@
         android:name="com.ddutra9.sunshinenano.ForecastFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.ddutra9.sunshinenano.ForecastFragment"
+        tools:context="com.example.android.sunshine.app.ForecastFragment"
         tools:layout="@android:layout/list_content" />
 
     <com.ddutra9.sunshinenano.MyView

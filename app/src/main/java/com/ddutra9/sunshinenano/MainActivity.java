@@ -102,11 +102,11 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             return true;
         }
 
-        if (id == R.id.action_smile && !mTwoPane) {
-            MyView myView = (MyView) findViewById(R.id.custom_view);
-            myView.setVisibility(View.VISIBLE);
-            return true;
-        }
+//        if (id == R.id.action_smile && !mTwoPane) {
+//            MyView myView = (MyView) findViewById(R.id.custom_view);
+//            myView.setVisibility(View.VISIBLE);
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

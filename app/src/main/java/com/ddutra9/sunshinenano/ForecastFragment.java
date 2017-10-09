@@ -108,18 +108,25 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //        List<String> weekForecast = new ArrayList<String>();
 //        mForecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast,
 //                R.id.list_item_forecast_textview, weekForecast);
-
-        mForecastAdapter = new ForecastAdapter(getActivity());
-
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
-
-        recycleViewForecast = (RecyclerView) rootView.findViewById(R.id.recycleview_forecast);
         emptyView = rootView.findViewById(R.id.recycleview_forecast_empty);
+        recycleViewForecast = (RecyclerView) rootView.findViewById(R.id.recycleview_forecast);
 
+        mForecastAdapter = new ForecastAdapter(getActivity(), new ForecastAdapter.ForecastAdapterOnClickHandler() {
+            @Override
+            public void onClick(Long date, ForecastAdapter.ForecastAdapterViewHolder vh) {
+                String locationSetting = Utility.getPreferredLocation(getActivity());
+                ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date));
+                mPosition = vh.getAdapterPosition();
+            }
+        }, emptyView);
+
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
 
         recycleViewForecast.setLayoutManager(layoutManager);
         recycleViewForecast.setAdapter(mForecastAdapter);
+        recycleViewForecast.setHasFixedSize(true);
+
 //        recycleViewForecast.setEmptyView(emptyView);
 
 //        listViewForecast.setOnItemClickListener(new AdapterView.OnItemClickListener() {

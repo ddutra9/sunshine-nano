@@ -8,6 +8,10 @@
         <item name="toolbarStyle">@style/Toolbar</item>
     </style>
 
+    <style name="AppTheme.Main" parent="@style/AppTheme"/>
+
+    <style name="AppTheme.Details." parent="@style/AppTheme"/>
+
     <!-- main activity toolbar style -->
     <style name="Toolbar" parent="Widget.AppCompat.Toolbar">
         <item name="android:background">?attr/colorPrimary</item>

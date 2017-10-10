@@ -1,6 +1,7 @@
 package com.ddutra9.sunshinenano;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -8,6 +9,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,6 +34,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,6 +43,8 @@ import android.widget.TextView;
 import com.ddutra9.sunshinenano.data.WeatherContract;
 import com.ddutra9.sunshinenano.service.SunshineService;
 import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
+
+import static android.R.attr.data;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -82,7 +89,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private RecyclerView recycleViewForecast;
     private View emptyView;
     private int mPosition = RecyclerView.NO_POSITION;
-    private boolean useTodayLayout;
+    private boolean useTodayLayout, mAutoSelectView;
+    private int mChoiceMode;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -119,7 +127,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date));
                 mPosition = vh.getAdapterPosition();
             }
-        }, emptyView);
+        }, emptyView, mChoiceMode);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
 
@@ -159,13 +167,30 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 //        });
 
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            mPosition = savedInstanceState.getInt(SELECTED_KEY);
+        if (savedInstanceState != null) {
+
+            if (savedInstanceState.containsKey(SELECTED_KEY)) {
+                // The Recycler View probably hasn't even been populated yet.  Actually perform the
+                // swapout in onLoadFinished.
+                mPosition = savedInstanceState.getInt(SELECTED_KEY);
+            }
+
+            mForecastAdapter.onRestoreInstanceState(savedInstanceState);
         }
 
         mForecastAdapter.setUseTodayLayout(useTodayLayout);
 
         return rootView;
+    }
+
+    @Override
+    public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        super.onInflate(activity, attrs, savedInstanceState);
+        TypedArray a = activity.obtainStyledAttributes(attrs, R.styleable.ForecastFragment,
+                +0, 0);
+        mChoiceMode = a.getInt(R.styleable.ForecastFragment_android_choiceMode, AbsListView.CHOICE_MODE_NONE);
+        mAutoSelectView = a.getBoolean(R.styleable.ForecastFragment_autoSelectView, false);
+        a.recycle();
     }
 
     @Override
@@ -267,8 +292,26 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             recycleViewForecast.smoothScrollToPosition(mPosition);
         }
 
-        if((data == null || data.getCount() == 0)){
-            updateEmpityView();
+        updateEmpityView();
+        if (data.getCount() > 0) {
+            recycleViewForecast.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    // Since we know we're going to get items, we keep the listener around until
+                    // we see Children.
+                    if (recycleViewForecast.getChildCount() > 0) {
+                        recycleViewForecast.getViewTreeObserver().removeOnPreDrawListener(this);
+                        int itemPosition = mForecastAdapter.getSelectedItemPosition();
+                        if (RecyclerView.NO_POSITION == itemPosition) itemPosition = 0;
+                        RecyclerView.ViewHolder vh = recycleViewForecast.findViewHolderForAdapterPosition(itemPosition);
+                        if (null != vh && mAutoSelectView) {
+                            mForecastAdapter.selectView(vh);
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
     }
 
@@ -308,6 +351,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             outState.putInt(SELECTED_KEY, mPosition);
         }
 
+        mForecastAdapter.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 

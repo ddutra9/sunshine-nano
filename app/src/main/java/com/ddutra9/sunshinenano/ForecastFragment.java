@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -45,11 +46,13 @@ import com.ddutra9.sunshinenano.service.SunshineService;
 import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
 
 import static android.R.attr.data;
+import static android.R.attr.y;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SharedPreferences.OnSharedPreferenceChangeListener {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
+        SharedPreferences.OnSharedPreferenceChangeListener{
 
     //    private ArrayAdapter<String> mForecastAdapter;
     private static final String TAG = ForecastFragment.class.getSimpleName();
@@ -134,6 +137,22 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         recycleViewForecast.setLayoutManager(layoutManager);
         recycleViewForecast.setAdapter(mForecastAdapter);
         recycleViewForecast.setHasFixedSize(true);
+
+        final View parallaxView = rootView.findViewById(R.id.parallax_bar);
+        if(parallaxView != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+            recycleViewForecast.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    int max = parallaxView.getHeight();
+                    if(dy > 0){
+                        parallaxView.setTranslationY(Math.max(-max, parallaxView.getTranslationY() - dy / 2));
+                    } else {
+                        parallaxView.setTranslationY(Math.min(0, parallaxView.getTranslationY() - dy / 2));
+                    }
+                }
+            });
+        }
 
 //        recycleViewForecast.setEmptyView(emptyView);
 
@@ -404,5 +423,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sp.unregisterOnSharedPreferenceChangeListener(this);
         super.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        if(recycleViewForecast != null) recycleViewForecast.clearOnScrollListeners();
+        super.onDestroy();
     }
 }

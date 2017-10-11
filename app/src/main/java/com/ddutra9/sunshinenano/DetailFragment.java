@@ -11,8 +11,10 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,6 +41,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
             pressureText, mDescriptionView;
     private ImageView detailIcon;
     private static final int LOADER_DETAIL = 0;
+    public static final String DETAIL_TRANSITION_ANIMATION = "DTA";
 
     private static final String[] FORECAST_COLUMNS = {
             WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -71,6 +74,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private String mForecastStr;
     private ShareActionProvider mShareActionProvider;
     private Uri mUri;
+    private boolean mTransitionAnimation;
 
     public DetailFragment() {
         setHasOptionsMenu(true);
@@ -102,6 +106,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         Bundle arguments = getArguments();
         if (arguments != null) {
             mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+            mTransitionAnimation = arguments.getBoolean(DetailFragment.DETAIL_TRANSITION_ANIMATION, false);
         }
 
         detailIcon = (ImageView) rootView.findViewById(R.id.detail_icon);
@@ -154,13 +159,13 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.v(LOG_TAG, "onLoadFinished");
-        if(data == null || !data.moveToFirst()) {
+        if (data == null || !data.moveToFirst()) {
             return;
         }
 
         ViewParent vp = getView().getParent();
-        if ( vp instanceof CardView ) {
-            ((View)vp).setVisibility(View.VISIBLE);
+        if (vp instanceof CardView) {
+            ((View) vp).setVisibility(View.VISIBLE);
         }
 
         String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
@@ -198,8 +203,13 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
         pressureText.setText(Utility.getFormattedPressure(getContext(), data.getFloat(COL_PRESSURE)));
 
-        if(mShareActionProvider != null){
+        if (mShareActionProvider != null) {
             mShareActionProvider.setShareIntent(createShareForestIntent());
+        }
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (mTransitionAnimation) {
+            activity.supportStartPostponedEnterTransition();
         }
     }
 

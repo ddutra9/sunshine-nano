@@ -3,6 +3,7 @@ package com.ddutra9.sunshinenano;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -131,6 +132,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
                     .crossFade()
                     .into(forecastAdapterViewHolder.mIconView);
         }
+
+        ViewCompat.setTransitionName(forecastAdapterViewHolder.mIconView, "iconView" + position);
 
         forecastAdapterViewHolder.mDateView.setText(Utility.getFriendlyDayString(mContext, mCursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
 

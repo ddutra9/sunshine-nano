@@ -12,6 +12,8 @@ import android.preference.PreferenceManager;
 
 import com.ddutra9.sunshinenano.data.WeatherContract;
 import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 
 /**
  * Created by donato on 29/05/17.
@@ -19,6 +21,8 @@ import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
 
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    protected final static int PLACE_PICKER_REQUEST = 9090;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -114,6 +118,24 @@ public class SettingsActivity extends PreferenceActivity
             bindPreferenceSummaryToValue(locationPreference);
         } else if ( key.equals(getString(R.string.pref_art_pack_key)) ) {
             getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                String address = place.getAddress().toString();
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(this);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(getString(R.string.pref_location_key), address);
+                editor.commit();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

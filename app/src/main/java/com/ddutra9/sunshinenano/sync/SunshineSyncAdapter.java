@@ -31,6 +31,7 @@ import android.text.format.Time;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
+import com.ddutra9.sunshinenano.BuildConfig;
 import com.ddutra9.sunshinenano.MainActivity;
 import com.ddutra9.sunshinenano.R;
 import com.ddutra9.sunshinenano.Utility;
@@ -58,6 +59,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
     public final String TAG = SunshineSyncAdapter.class.getSimpleName();
 
     private static final String APPID_PARAM = "APPID";
+    public static final String ACTION_DATA_UPDATED = "com.ddutra9.sunshinenano.ACTION_DATA_UPDATED";
 
 
     // Interval at which to sync with the weather, in milliseconds.
@@ -537,11 +539,21 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
 
         try {
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
+            updateWidgets();
+            notifyWeather();
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
             e.printStackTrace();
             setNavegationMode(getContext(), LOCATION_STATUS_SERVER_INVALID);
         }
+    }
+
+    private void updateWidgets() {
+        Context context = getContext();
+        // Setting the package ensures that only components in our app will receive the broadcast
+        Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
+                .setPackage(context.getPackageName());
+        context.sendBroadcast(dataUpdatedIntent);
     }
 
     /**

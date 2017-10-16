@@ -162,4 +162,6 @@
     <string name="pref_location_longitude" translatable="false">loc-longitude</string>
 
     <string name="attribution_text">Powered by Google</string>
+    <!-- Strings related to Widgets -->
+    <string name="title_widget_today">Sunshine Today</string>
 </resources>

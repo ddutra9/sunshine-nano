@@ -164,4 +164,5 @@
     <string name="attribution_text">Powered by Google</string>
     <!-- Strings related to Widgets -->
     <string name="title_widget_today">Sunshine Today</string>
+    <string name="title_widget_detail">Sunshine Details</string>
 </resources>

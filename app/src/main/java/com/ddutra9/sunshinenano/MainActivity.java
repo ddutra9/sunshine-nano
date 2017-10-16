@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.ddutra9.sunshinenano.data.WeatherContract;
 import com.ddutra9.sunshinenano.service.RegistrationIntentService;
 import com.ddutra9.sunshinenano.sync.SunshineSyncAdapter;
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Uri contentUri = getIntent() != null ? getIntent().getData() : null;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar) ;
         setSupportActionBar(toolbar);
@@ -46,8 +48,15 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             mTwoPane = true;
 
             if (savedInstanceState == null) {
+                DetailFragment fragment = new DetailFragment();
+                if (contentUri != null) {
+                    Bundle args = new Bundle();
+                    args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
+                    fragment.setArguments(args);
+                }
+
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.weather_detail_container, new DetailFragment(), DETAILFRAGMENT_TAG)
+                        .replace(R.id.weather_detail_container, fragment, DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -57,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
 
         ForecastFragment forecastFragment = ((ForecastFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_forecast));
         forecastFragment.setUseTodayLayout(!mTwoPane);
+        if (contentUri != null) {
+            forecastFragment.setInitialSelectedDate(
+                    WeatherContract.WeatherEntry.getDateFromUri(contentUri));
+        }
 
         SunshineSyncAdapter.initializeSyncAdapter(this);
         if(checkPlayServices()){

@@ -95,9 +95,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     private RecyclerView recycleViewForecast;
     private View emptyView;
-    private int mPosition = RecyclerView.NO_POSITION;
     private boolean useTodayLayout, mAutoSelectView;
     private int mChoiceMode;
+    private long mInitialSelectedDate = -1;
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -132,7 +132,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             public void onClick(Long date, ForecastAdapter.ForecastAdapterViewHolder vh) {
                 String locationSetting = Utility.getPreferredLocation(getActivity());
                 ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, date), vh);
-                mPosition = vh.getAdapterPosition();
             }
         }, emptyView, mChoiceMode);
 
@@ -209,13 +208,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
 
         if (savedInstanceState != null) {
-
-            if (savedInstanceState.containsKey(SELECTED_KEY)) {
-                // The Recycler View probably hasn't even been populated yet.  Actually perform the
-                // swapout in onLoadFinished.
-                mPosition = savedInstanceState.getInt(SELECTED_KEY);
-            }
-
             mForecastAdapter.onRestoreInstanceState(savedInstanceState);
         }
 
@@ -334,10 +326,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mForecastAdapter.swapCursor(data);
 
-        if (mPosition != RecyclerView.NO_POSITION) {
-            recycleViewForecast.smoothScrollToPosition(mPosition);
-        }
-
         updateEmpityView();
         if ( data.getCount() == 0 ) {
             getActivity().supportStartPostponedEnterTransition();
@@ -349,10 +337,25 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     // we see Children.
                     if (recycleViewForecast.getChildCount() > 0) {
                         recycleViewForecast.getViewTreeObserver().removeOnPreDrawListener(this);
-                        int itemPosition = mForecastAdapter.getSelectedItemPosition();
-                        if (RecyclerView.NO_POSITION == itemPosition) itemPosition = 0;
-                        RecyclerView.ViewHolder vh = recycleViewForecast.findViewHolderForAdapterPosition(itemPosition);
-
+                        int position = mForecastAdapter.getSelectedItemPosition();
+                        if (position == RecyclerView.NO_POSITION &&
+                                -1 != mInitialSelectedDate) {
+                            Cursor data = mForecastAdapter.getCursor();
+                            int count = data.getCount();
+                            int dateColumn = data.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
+                            for (int i = 0; i < count; i++) {
+                                data.moveToPosition(i);
+                                if (data.getLong(dateColumn) == mInitialSelectedDate) {
+                                    position = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (position == RecyclerView.NO_POSITION) position = 0;
+                        // If we don't need to restart the loader, and there's a desired position to restore
+                        // to, do so now.
+                        recycleViewForecast.smoothScrollToPosition(position);
+                        RecyclerView.ViewHolder vh = recycleViewForecast.findViewHolderForAdapterPosition(position);
                         if (null != vh && mAutoSelectView) {
                             mForecastAdapter.selectView(vh);
                         }
@@ -366,6 +369,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 }
             });
         }
+    }
+
+    public void setInitialSelectedDate(long initialSelectedDate) {
+        mInitialSelectedDate = initialSelectedDate;
     }
 
     public void updateEmpityView(){
@@ -400,10 +407,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (mPosition != RecyclerView.NO_POSITION) {
-            outState.putInt(SELECTED_KEY, mPosition);
-        }
-
         mForecastAdapter.onSaveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }

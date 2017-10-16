@@ -117,7 +117,7 @@ public class ForecastAdapterCusor extends CursorAdapter {
                 .crossFade()
                 .into(viewHolder.iconView);
 
-        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE)));
+        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, cursor.getLong(ForecastFragment.COL_WEATHER_DATE), true));
 
         String description = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
 

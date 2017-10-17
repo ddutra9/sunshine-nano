@@ -36,6 +36,7 @@ import com.ddutra9.sunshinenano.MainActivity;
 import com.ddutra9.sunshinenano.R;
 import com.ddutra9.sunshinenano.Utility;
 import com.ddutra9.sunshinenano.data.WeatherContract;
+import com.ddutra9.sunshinenano.muzei.WeatherMuzeiSource;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -540,6 +541,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         try {
             getWeatherDataFromJson(forecastJsonStr, locationQuery);
             updateWidgets();
+            updateMuzei();
             notifyWeather();
         } catch (JSONException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -554,6 +556,16 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         Intent dataUpdatedIntent = new Intent(ACTION_DATA_UPDATED)
                 .setPackage(context.getPackageName());
         context.sendBroadcast(dataUpdatedIntent);
+    }
+
+    private void updateMuzei() {
+        // Muzei is only compatible with Jelly Bean MR1+ devices, so there's no need to update the
+        // Muzei background on lower API level devices
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Context context = getContext();
+            context.startService(new Intent(ACTION_DATA_UPDATED)
+                    .setClass(context, WeatherMuzeiSource.class));
+        }
     }
 
     /**

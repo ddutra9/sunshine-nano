@@ -3,6 +3,7 @@ package com.ddutra9.sunshinenano.muzei;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import com.ddutra9.sunshinenano.MainActivity;
 import com.ddutra9.sunshinenano.Utility;
@@ -16,6 +17,8 @@ import com.google.android.apps.muzei.api.MuzeiArtSource;
  */
 
 public class WeatherMuzeiSource extends MuzeiArtSource {
+    private static final String TAG = WeatherMuzeiSource.class.getSimpleName();
+
     private static final String[] FORECAST_COLUMNS = new String[]{
             WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC
@@ -33,6 +36,8 @@ public class WeatherMuzeiSource extends MuzeiArtSource {
         super.onHandleIntent(intent);
         boolean dataUpdated = intent != null &&
                 SunshineSyncAdapter.ACTION_DATA_UPDATED.equals(intent.getAction());
+        Log.d(TAG, "onHandleIntent dataUpdated: " + dataUpdated);
+        Log.d(TAG, "onHandleIntent isEnabled: " + isEnabled());
         if (dataUpdated && isEnabled()) {
             onUpdate(UPDATE_REASON_OTHER);
         }
